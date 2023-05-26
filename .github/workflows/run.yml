@@ -36,7 +36,7 @@ jobs:
       - name: No changes found
         if: steps.check_commit.outputs.changes == 'false'
         run: |
-          echo "::notice ::No changes found in ${{ matrix.modules.repo }} today"
+          echo "::notice ::No changes found in ${{ matrix.modules.repo }} on $(date -u)" 
 
       - name: Checkout local scripts
         if: steps.check_commit.outputs.changes == 'true'
