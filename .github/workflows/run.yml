@@ -20,7 +20,7 @@ jobs:
           - cloudid: gcp
             repo: 'PaloAltoNetworks/terraform-google-vmseries-modules'
     steps:
-      - name: Checkout module repo for {{ matrix.source.cloudid }}
+      - name: Checkout module repo for ${{ matrix.modules.cloudid }}
         uses: actions/checkout@v3
         with:
           repository: ${{ matrix.modules.repo }}
