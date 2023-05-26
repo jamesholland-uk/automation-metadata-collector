@@ -1,0 +1,1 @@
+This branch contains the output of the syncronizer in the main branch. It can be read by other repos to collect the latest documentation for the Terraform module. Please do not modify this branch manually.
