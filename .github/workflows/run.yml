@@ -34,7 +34,6 @@ jobs:
         with:
           repository: PaloAltoNetworks/${{ matrix.modules.repo }}
           path: ${{ matrix.modules.repo }}
-          fetch-depth: 1
 
       - name: Check if commit to repo today
         if: github.event.inputs.force != 'true'
@@ -51,8 +50,6 @@ jobs:
       - name: Checkout local scripts
         if: steps.check_commit.outputs.changes != 'false'
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
 
       - name: Checkout output branch
         if: steps.check_commit.outputs.changes != 'false'
@@ -60,7 +57,6 @@ jobs:
         with:
           ref: 'output'
           path: 'output'
-          fetch-depth: 1
 
       - name: Setup Python
         if: steps.check_commit.outputs.changes != 'false'
@@ -78,6 +74,7 @@ jobs:
       - name: Sync module readmes to pan.dev
         if: steps.check_commit.outputs.changes != 'false'
         run: |
+          tree .
           tree "./${{ matrix.modules.repo }}"
           tree "./output
           python process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
