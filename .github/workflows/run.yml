@@ -50,6 +50,8 @@ jobs:
       - name: Checkout local scripts
         if: steps.check_commit.outputs.changes != 'false'
         uses: actions/checkout@v3
+        with:
+          path: 'scripts'
 
       - name: Checkout output branch
         if: steps.check_commit.outputs.changes != 'false'
@@ -75,10 +77,8 @@ jobs:
         if: steps.check_commit.outputs.changes != 'false'
         run: |
           tree .
-          tree "./${{ matrix.modules.repo }}"
-          tree "./output"
-          python process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
-          python process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
+          python ./scripts/process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
+          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
       
       - name: Commit and push changes
         if: steps.check_commit.outputs.changes != 'false'
