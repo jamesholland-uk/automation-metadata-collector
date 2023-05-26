@@ -76,7 +76,7 @@ jobs:
         run: |
           tree .
           tree "./${{ matrix.modules.repo }}"
-          tree "./output
+          tree "./output"
           python process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
           python process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
       
