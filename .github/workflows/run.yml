@@ -23,16 +23,16 @@ jobs:
       matrix:
         modules:
           - cloudid: aws
-            repo: 'PaloAltoNetworks/terraform-aws-vmseries-modules'
+            repo: 'terraform-aws-vmseries-modules'
           - cloudid: azure
-            repo: 'PaloAltoNetworks/terraform-azurerm-vmseries-modules'
+            repo: 'terraform-azurerm-vmseries-modules'
           - cloudid: gcp
-            repo: 'PaloAltoNetworks/terraform-google-vmseries-modules'
+            repo: 'terraform-google-vmseries-modules'
     steps:
       - name: Checkout module repo for ${{ matrix.modules.cloudid }}
         uses: actions/checkout@v3
         with:
-          repository: ${{ matrix.modules.repo }}
+          repository: PaloAltoNetworks/${{ matrix.modules.repo }}
           path: ${{ matrix.modules.repo }}
           fetch-depth: 1
 
