@@ -30,14 +30,21 @@ jobs:
         id: check_commit
         run: |
           cd ${{ matrix.modules.repo }}
-          git log --since="1 day ago" --pretty=format:"%h" | grep -q .
+          git log --since="1 day ago" --pretty=format:"%h" | grep -q . && echo "changes=true" || echo "changes=false" >> "$GITHUB_OUTPUT"
+      
+      - name: No changes found
+        if: steps.check_commit.outputs.changes == 'false'
+        run: |
+          echo "::notice ::No changes found in ${{ matrix.modules.repo }} today"
 
       - name: Checkout local scripts
+        if: steps.check_commit.outputs.changes == 'true'
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
       - name: Checkout output branch
+        if: steps.check_commit.outputs.changes == 'true'
         uses: actions/checkout@v3
         with:
           ref: 'output'
@@ -45,22 +52,26 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Python
+        if: steps.check_commit.outputs.changes == 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
           cache: 'pip' # caching pip dependencies
 
       - name: Install Python Dependencies
+        if: steps.check_commit.outputs.changes == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Sync module readmes to pan.dev
+        if: steps.check_commit.outputs.changes == 'true'
         run: |
-          python process_modules_readmes.py --type modules "${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
-          python process_modules_readmes.py --type refarch "${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
+          python process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
+          python process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
       
       - name: Commit and push changes
+        if: steps.check_commit.outputs.changes == 'true'
         run: |
           cd output
           git config --global user.name 'GitHub Actions'
