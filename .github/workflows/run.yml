@@ -11,29 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo:
-          [
-            'PaloAltoNetworks/terraform-aws-vmseries-modules',
-            'PaloAltoNetworks/terraform-azurerm-vmseries-modules',
-            'PaloAltoNetworks/terraform-google-vmseries-modules',
-          ]
+        modules:
+          - cloudid: aws
+            repo: 'PaloAltoNetworks/terraform-aws-vmseries-modules'
+          - cloudid: azure
+            repo: 'PaloAltoNetworks/terraform-azurerm-vmseries-modules'
+          - cloudid: gcp
+            repo: 'PaloAltoNetworks/terraform-google-vmseries-modules'
     steps:
-      - name: Checkout code
+      - name: Checkout module repo for {{ matrix.source.cloudid }}
         uses: actions/checkout@v3
         with:
-          repository: ${{ matrix.repo }}
-          path: ${{ matrix.repo }}
+          repository: ${{ matrix.modules.repo }}
+          path: ${{ matrix.modules.repo }}
           fetch-depth: 1
 
       - name: Check if commit to repo today
         id: check_commit
         run: |
-          cd ${{ matrix.repo }}
+          cd ${{ matrix.modules.repo }}
           git log --since="1 day ago" --pretty=format:"%h" | grep -q .
 
-      - name: Checkout code
+      - name: Checkout local scripts
         uses: actions/checkout@v3
         with:
+          fetch-depth: 1
+
+      - name: Checkout output branch
+        uses: actions/checkout@v3
+        with:
+          ref: 'output'
+          path: 'output'
           fetch-depth: 1
 
       - name: Setup Python
@@ -49,5 +57,14 @@ jobs:
 
       - name: Sync module readmes to pan.dev
         run: |
-          mkdir ./output
-          python process_modules_readmes.py "${{ matrix.repo }}/modules" "./output"
+          python process_modules_readmes.py --type modules "${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
+          python process_modules_readmes.py --type refarch "${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
+      
+      - name: Commit and push changes
+        run: |
+          cd output
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email '<>'
+          git add -A
+          git commit -m "Sync module readmes for ${{ matrix.modules.cloudid }} on $(date -u)"
+          git push origin output
