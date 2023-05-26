@@ -8,6 +8,7 @@ on:
 
 jobs:
   sync-readmes-from-modules:
+    name: Sync ${{ matrix.modules.cloudid }} modules
     runs-on: ubuntu-latest
     strategy:
       matrix:
