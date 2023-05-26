@@ -78,12 +78,15 @@ jobs:
       - name: Sync module readmes to pan.dev
         if: steps.check_commit.outputs.changes != 'false'
         run: |
+          tree "./${{ matrix.modules.repo }}"
+          tree "./output
           python process_modules_readmes.py --type modules "./${{ matrix.modules.repo }}/modules" "./output/${{ matrix.modules.cloudid }}/vmseries/modules"
           python process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/${{ matrix.modules.cloudid }}/vmseries/reference-architectures"
       
       - name: Commit and push changes
         if: steps.check_commit.outputs.changes != 'false'
         run: |
+          tree "./output"
           cd output
           git config --global user.name 'GitHub Actions'
           git config --global user.email '<>'
