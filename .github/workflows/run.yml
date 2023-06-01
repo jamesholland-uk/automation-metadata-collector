@@ -20,6 +20,8 @@ jobs:
     name: Sync ${{ matrix.modules.cloudid }} modules
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false # treat each job as separate
+      max-parallel: 1 # prevent conflicts with git commit
       matrix:
         modules:
           - cloudid: aws
@@ -34,6 +36,7 @@ jobs:
         with:
           repository: PaloAltoNetworks/${{ matrix.modules.repo }}
           path: ${{ matrix.modules.repo }}
+          ref: readme-updates-for-automation-hub
 
       - name: Check if commit to repo today
         if: github.event.inputs.force != 'true'
