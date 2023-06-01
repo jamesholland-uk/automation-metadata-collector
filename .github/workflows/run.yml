@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: 'Force sync of all repos, even if no changes today'
+        description: 'Force sync everything'
         required: false
         default: 'false'
         type: choice
