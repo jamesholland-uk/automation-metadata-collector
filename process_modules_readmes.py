@@ -5,6 +5,8 @@ import re
 import logging
 from pathlib import Path
 from typing import NamedTuple, Union, Optional, TypeVar, Generic, Callable
+from urllib.request import urlopen 
+import base64
 
 import argparse
 import frontmatter as fm
@@ -64,6 +66,30 @@ class OutputFile(NamedTuple):
 
     contents: str
     path: Path
+
+
+def image_url_to_base64(url: str) -> bytes:
+    """Convert an image at a URL to a base64 encoded string
+
+    Args:
+        url (str): URL of the image
+
+    Returns:
+        str: Base64 encoded string
+    """
+    return base64.b64encode(urlopen(url).read())
+
+
+def save_image(b64image: bytes, image_name: str, directory: Path) -> None:
+    """Save an image to a directory
+
+    Args:
+        b64image (bytes): Base64 encoded image
+        image_name (str): Name of the image
+        directory (Path): Directory to save the image to
+    """
+    image_path = directory / image_name
+    image_path.write_bytes(base64.b64decode(b64image))
 
 
 def extract_cloud_id(string: str) -> str:
@@ -263,10 +289,48 @@ def delete_markdown_files(directory: Path):
     """
     md_files = directory.glob(f"*.md")
     mdx_files = directory.glob(f"*.mdx")
+    png_files = directory.glob(f"*.png")
     for f in md_files:
         os.remove(f)
     for f in mdx_files:
         os.remove(f)
+    for f in png_files:
+        os.remove(f)
+
+
+def download_images(module: TFModule) -> dict[str, bytes]:
+    """Download images from the README.md file
+
+    Args:
+        module (TFModule): TFModule
+    
+    Returns:
+        dict: Dictionary of image names and image contents
+    """
+    images = {}
+    image_pattern = re.compile(r"!\[.*?\]\((.*?)\)")
+    for match in image_pattern.finditer(module.readme_contents):
+        image_url = match.group(1)
+        image_name = image_url.split("/")[-1]
+        images[image_name] = image_url_to_base64(image_url)
+    return images
+
+
+def replace_image_urls(readme_contents: str) -> str:
+    """Replace image URLs with local image names
+
+    Args:
+        readme_contents (str): Contents of the README.md file
+
+    Returns:
+        str: Contents of the README.md file with local image names
+    """
+    image_pattern = re.compile(r"!\[.*?\]\((.*?)\)")
+    for match in image_pattern.finditer(readme_contents):
+        image_url = match.group(1)
+        image_name = image_url.split("/")[-1]
+        readme_contents = readme_contents.replace(image_url, image_name+".png")
+    return readme_contents
 
 
 def main(modules_directory: str, dest_directory: str, module_type: str = None):
@@ -282,17 +346,24 @@ def main(modules_directory: str, dest_directory: str, module_type: str = None):
     if module_type is not None:
         tf_modules = [module for module in tf_modules if module.type == module_type]
     output_files: list[OutputFile] = []
+    images: list[dict[str, bytes]] = []
     for module in tf_modules:
         if module.show_in_hub is False:
             continue
+        readme_images = download_images(module)
         new_readme_contents = set_new_frontmatter(module)
+        new_readme_contents = replace_image_urls(new_readme_contents)
         new_readme_contents = sanitize_readme_contents(new_readme_contents)
         dest_file = dest_directory_path / f"{module.slug}.{OUTPUT_EXTENSION}"
         output_files.append(OutputFile(new_readme_contents, dest_file))
+        images.append(readme_images)
     dest_directory_path.mkdir(parents=True, exist_ok=True)
     delete_markdown_files(dest_directory_path)
     for output_file in output_files:
         output_file.path.write_text(output_file.contents)
+    for image_dict in images:
+        for image_name, image_contents in image_dict.items():
+            save_image(image_contents, image_name+".png", dest_directory_path)
 
 
 
