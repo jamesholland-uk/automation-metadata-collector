@@ -20,6 +20,9 @@ KNOWN_ACRYONYMS = [
     "tgw",
     "natgw",
     "nat",
+    "lb",
+    "http",
+    "iam",
 ]
 
 T = TypeVar('T')
