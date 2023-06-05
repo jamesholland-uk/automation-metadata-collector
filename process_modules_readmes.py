@@ -3,7 +3,7 @@
 import os
 import re
 from pathlib import Path
-from typing import NamedTuple, Union
+from typing import NamedTuple, Union, Optional
 
 import argparse
 import frontmatter as fm
@@ -47,7 +47,8 @@ class TFModule(NamedTuple):
     cloud_id: str
     type: str
     source_file: str
-    # description: str
+    description: Optional[str]
+    show_in_hub: bool
     # version: str
 
 class OutputFile(NamedTuple):
@@ -120,12 +121,20 @@ def read_and_parse_readme_file(readme_file: Path) -> TFModule:
     type = get_meta(
         frontmatter, "type", lambda: determine_module_type(readme_file, readme_contents)
     )
+    show_in_hub = get_meta(
+        frontmatter, "show_in_hub", lambda: True
+    )
+    description = get_meta(
+        frontmatter, "description", lambda: None
+    )
     return TFModule(
         title=title,
         slug=slug,
         cloud_id=cloud_id,
         short_title=short_title,
         type=type,
+        show_in_hub=show_in_hub,
+        description=description,
         source_file=str(readme_file),
         readme_contents=readme_contents,
     )
@@ -165,7 +174,8 @@ def set_new_frontmatter(module: TFModule) -> str:
     frontmatter["id"] = module.slug
     frontmatter["title"] = module.title
     frontmatter["sidebar_label"] = module.short_title
-    # frontmatter["description"] = module.description
+    if module.description:
+        frontmatter["description"] = module.description
     frontmatter["hide_title"] = True
     frontmatter["pagination_next"] = None
     frontmatter["pagination_prev"] = None
@@ -266,6 +276,8 @@ def main(modules_directory: str, dest_directory: str, module_type: str = None):
         tf_modules = [module for module in tf_modules if module.type == module_type]
     output_files: list[OutputFile] = []
     for module in tf_modules:
+        if module.show_in_hub is False:
+            continue
         new_readme_contents = set_new_frontmatter(module)
         new_readme_contents = sanitize_readme_contents(new_readme_contents)
         dest_file = dest_directory_path / f"{module.slug}.{OUTPUT_EXTENSION}"
