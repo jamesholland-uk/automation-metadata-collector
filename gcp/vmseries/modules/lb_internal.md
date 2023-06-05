@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: Lb Internal
+sidebar_label: LB Internal
 title: Internally-Facing Regional TCP/UDP Load Balancer on GCP
 ---
 

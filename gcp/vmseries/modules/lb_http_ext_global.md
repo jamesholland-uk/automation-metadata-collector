@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: Lb Http Ext Global
+sidebar_label: LB HTTP Ext Global
 title: Google Cloud HTTP/HTTPS External Global Load Balancer
 ---
 

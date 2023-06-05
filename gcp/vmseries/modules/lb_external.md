@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: Lb External
+sidebar_label: LB External
 title: Externally-Facing Regional TCP/UDP Network Load Balancer on GCP
 ---
 

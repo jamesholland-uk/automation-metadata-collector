@@ -12,7 +12,7 @@ keywords:
 - gcp
 pagination_next: null
 pagination_prev: null
-sidebar_label: Iam Service Account
+sidebar_label: IAM Service Account
 title: IAM Service Account
 ---
 
