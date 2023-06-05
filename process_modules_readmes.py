@@ -2,8 +2,9 @@
 """
 import os
 import re
+import logging
 from pathlib import Path
-from typing import NamedTuple, Union, Optional
+from typing import NamedTuple, Union, Optional, TypeVar, Generic, Callable
 
 import argparse
 import frontmatter as fm
@@ -20,6 +21,10 @@ KNOWN_ACRYONYMS = [
     "natgw",
     "nat",
 ]
+
+T = TypeVar('T')
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class NoFrontmatterError(Exception):
@@ -74,7 +79,7 @@ def extract_cloud_id(string: str) -> str:
     return cloud_id
 
 
-def get_meta(frontmatter: fm, key: str, default: Union[str, callable] = None) -> str:
+def get_meta(frontmatter: fm, key: str, default: Union[T, Callable[[any], T]] = None) -> T:
     """Get a value from the frontmatter or return a default value
 
     Args:
@@ -106,8 +111,11 @@ def read_and_parse_readme_file(readme_file: Path) -> TFModule:
     Returns:
         TFModule: TFModule instance
     """
-    readme_contents = readme_file.read_text()
-    frontmatter = fm.loads(readme_contents)
+    logging.debug(f"Processing file: {readme_file}")
+    readme_file_contents = readme_file.read_text()
+    readme_parsed = fm.loads(readme_file_contents)
+    readme_contents = readme_parsed.content
+    frontmatter = readme_parsed.metadata
     slug = get_meta(frontmatter, "slug", readme_file.parent.name)
     title = get_meta(
         frontmatter, "title", lambda: re.search(r"^# (.*)", readme_contents).group(1)
@@ -118,21 +126,21 @@ def read_and_parse_readme_file(readme_file: Path) -> TFModule:
     short_title = get_meta(
         frontmatter, "short_title", lambda: synthesize_short_title(slug)
     )
-    type = get_meta(
+    module_type = get_meta(
         frontmatter, "type", lambda: determine_module_type(readme_file, readme_contents)
     )
     show_in_hub = get_meta(
-        frontmatter, "show_in_hub", lambda: True
+        frontmatter, "show_in_hub", True
     )
     description = get_meta(
-        frontmatter, "description", lambda: None
+        frontmatter, "description", None
     )
     return TFModule(
         title=title,
         slug=slug,
         cloud_id=cloud_id,
         short_title=short_title,
-        type=type,
+        type=module_type,
         show_in_hub=show_in_hub,
         description=description,
         source_file=str(readme_file),
@@ -152,11 +160,7 @@ def get_module_readme_files(module_directory: Path) -> list[TFModule]:
     result = []
     readme_files = module_directory.glob("*/README.md")
     for readme in readme_files:
-        try:
-            tf_module = read_and_parse_readme_file(readme)
-        except NoFrontmatterError as e:
-            print(e)
-            continue
+        tf_module = read_and_parse_readme_file(readme)
         result.append(tf_module)
     return result
 
