@@ -418,7 +418,7 @@ def convert_cloud_id(cloud_id: str) -> str:
     elif cloud_id == "azurerm":
         return "azure"
     else:
-        raise ValueError("Unrecognized cloud_id")
+        raise ValueError("Unrecognized cloud_id:" + cloud_id)
 
 
 def main(modules_directory: str, dest_directory: str, module_type: str = None):
