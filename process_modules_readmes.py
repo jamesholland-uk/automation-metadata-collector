@@ -352,11 +352,11 @@ def insert_external_links(readme_contents: str, modules_directory: str, module_s
 
     # URL looks like: https://github.com/PaloAltoNetworks/terraform-azurerm-vmseries-modules/tree/main/examples/dedicated_vmseries
     github_image_url = "https://github.com/PaloAltoNetworks/" + github_repo_slug + "/tree/main/examples/" + module_slug
-    github_image_path = "../../../view_on_github.jpg"
+    github_image_path = "/img/view_on_github.jpg"
 
     # URL looks like: https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/azurerm/latest/examples/dedicated_vmseries
     terraform_registry_image_url = "https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/" + terraform_registry_cloud_id + "/latest/examples/" + module_slug
-    terraform_registry_image_path = "../../../view_on_terraform_registry.jpg"
+    terraform_registry_image_path = "/img/view_on_terraform_registry.jpg"
 
     # Find the first occurrence of '## ' in the README, above this is where the linked images will be inserted
     index = readme_contents.find('## ')
