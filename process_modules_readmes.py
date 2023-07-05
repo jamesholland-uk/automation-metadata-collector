@@ -333,6 +333,34 @@ def replace_image_urls(readme_contents: str) -> str:
     return readme_contents
 
 
+def insert_external_links(string):
+    """
+    Inserts markdown code to display an image linked to an external URL above the first occurrence of '## ' in the given string.
+    
+    Args:
+        string (str): The input string to process.
+        
+    Returns:
+        str: The modified string with the image markdown code inserted.
+    """
+    github_image_url = "https://github.com"
+    github_image_path = "../../../view_on_github.jpg"
+
+    terraform_registry_image_url = "https://registry.terraform.io"
+    terraform_registry_image_path = "../../../view_on_terraform_registry.jpg"
+
+    # Find the first occurrence of '## ' in the string
+    index = string.find('## ')
+    
+    if index != -1:
+        # Insert the image markdown code above the '## '
+        github_image_markdown = f"[![GitHub Logo]({github_image_path})]({github_image_url})"
+        terraform_registry_image_markdown = f"[![Terraform Logo]({terraform_registry_image_path})]({terraform_registry_image_url})\n\n"
+        string = string[:index] + github_image_markdown + " " + terraform_registry_image_markdown + string[index:]
+    
+    return string
+
+
 def main(modules_directory: str, dest_directory: str, module_type: str = None):
     """Main function
 
@@ -354,6 +382,7 @@ def main(modules_directory: str, dest_directory: str, module_type: str = None):
         new_readme_contents = set_new_frontmatter(module)
         new_readme_contents = replace_image_urls(new_readme_contents)
         new_readme_contents = sanitize_readme_contents(new_readme_contents)
+        new_readme_contents = insert_external_links(new_readme_contents)
         dest_file = dest_directory_path / f"{module.slug}.{OUTPUT_EXTENSION}"
         output_files.append(OutputFile(new_readme_contents, dest_file))
         images.append(readme_images)
