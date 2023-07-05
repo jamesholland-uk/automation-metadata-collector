@@ -408,15 +408,15 @@ def convert_cloud_id(cloud_id: str) -> str:
         'aws'
         >>> map_cloud_id("gcp")
         'google'
-        >>> map_cloud_id("azurerm")
-        'azure'
+        >>> map_cloud_id("azure")
+        'azurerm'
     """
     if cloud_id == "aws":
         return "aws"
     elif cloud_id == "gcp":
         return "google"
-    elif cloud_id == "azurerm":
-        return "azure"
+    elif cloud_id == "azure":
+        return "azurerm"
     else:
         raise ValueError("Unrecognized cloud_id:" + cloud_id)
 
