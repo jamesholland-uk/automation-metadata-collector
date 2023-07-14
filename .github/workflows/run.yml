@@ -67,7 +67,7 @@ jobs:
 
       - name: Show JASON
         run: |
-          echo "${{ fromJSON(JSON_ARRAY) }}"
+          echo "$JSON_ARRAY"
 
       # - name: Set matrix based on cloud-id
       #   id: matrix
