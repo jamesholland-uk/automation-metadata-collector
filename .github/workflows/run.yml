@@ -65,7 +65,7 @@ jobs:
             cloudid: gcp
             modules.repo: 'terraform-google-vmseries-modules'
             repo: 'terraform-google-vmseries-modules'
-            # if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
+            if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
 
     steps:
       - name: Show input cloud-id
