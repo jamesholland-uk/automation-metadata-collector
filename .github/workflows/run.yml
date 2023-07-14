@@ -65,6 +65,22 @@ jobs:
             # if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
 
     steps:
+      - name: Show input cloud-id
+        run: |
+          echo "${{ github.event.inputs.cloud-id }}"
+
+      - name: Show all inputs
+        run: |
+          echo "${{ github.event.inputs }}"
+
+      - name: Show matric cloudid
+        run: |
+          echo "${{ matrix.modules.cloudid }}"
+ 
+      - name: Show matric repo
+        run: |
+          echo "${{ matrix.modules.repo }}"
+    
       # - name: Set repo variable based on cloud_id
       #   run: |
       #     if [[ "${{ matrix.cloud_id }}" == "aws" ]]; then
