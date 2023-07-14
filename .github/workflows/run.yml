@@ -70,7 +70,7 @@ jobs:
           echo "$JSON_ARRAY"
       - name: Show JASON_NOT
         run: |
-          echo "${{ fromJSON('{ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }, { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" }, { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }') }}"
+          echo "${{ fromJSON('{ "modules": [ { "cloudid": "aws", "repo": "terraform-aws-vmseries-modules" }, { "cloudid": "azure", "repo": "terraform-azurerm-vmseries-modules" }, { "cloudid": "gcp", "repo": "terraform-google-vmseries-modules" } ] }') }}"
 
       # - name: Set matrix based on cloud-id
       #   id: matrix
