@@ -15,7 +15,11 @@ on:
           - azure
           - gcp
 
-jobs:  
+jobs:
+  # setup-matrix:
+  #   name: Generate matrix
+  #   runs-on: ubuntu-latest
+  
   generate-docs:
     # name: Generate ${{ matrix.modules.cloudid }} module docs
     name: Generate ${{ matrix.cloudid }} module docs
@@ -53,19 +57,44 @@ jobs:
       #           - cloud_id: gcp
       #             repo: 'terraform-google-vmseries-modules'
 
+      # matrix:
+      #   include:
+      #     - modules.cloudid: aws
+      #       modules.repo: 'terraform-aws-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'aws' || github.event.inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: azure
+      #       modules.repo: 'terraform-azurerm-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: gcp
+      #       cloudid: gcp
+      #       modules.repo: 'terraform-google-vmseries-modules'
+      #       repo: 'terraform-google-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
+
+
       matrix:
         include:
-          - modules.cloudid: aws
-            modules.repo: 'terraform-aws-vmseries-modules'
-            if: ${{ github.event.inputs.cloud-id == 'aws' || github.event.inputs.cloud-id == 'all' }}
-          - modules.cloudid: azure
-            modules.repo: 'terraform-azurerm-vmseries-modules'
-            if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
-          - modules.cloudid: gcp
+          # AWS
+          - github.event.inputs.cloud-id: aws
+            cloudid: aws
+            repo: 'terraform-aws-vmseries-modules'
+          - github.event.inputs.cloud-id: all
+            cloudid: aws
+            repo: 'terraform-aws-vmseries-modules'
+          # Azure
+          - github.event.inputs.cloud-id: azure
+            cloudid: azure
+            repo: 'terraform-azurerm-vmseries-modules'
+          - github.event.inputs.cloud-id: all
+            cloudid: azure
+            repo: 'terraform-azurerm-vmseries-modules'
+          # GCP
+          - github.event.inputs.cloud-id: gcp
             cloudid: gcp
-            modules.repo: 'terraform-google-vmseries-modules'
             repo: 'terraform-google-vmseries-modules'
-            if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
+          - github.event.inputs.cloud-id: all
+            cloudid: gcp
+            repo: 'terraform-google-vmseries-modules'
 
     steps:
       - name: Show input cloud-id
@@ -76,13 +105,13 @@ jobs:
       #   run: |
       #     echo "${{ github.event.inputs.cloudid }}"
 
-      - name: Show matrix modules cloudid
-        run: |
-          echo "${{ matrix.modules.cloudid }}"
+      # - name: Show matrix modules cloudid
+      #   run: |
+      #     echo "${{ matrix.modules.cloudid }}"
  
-      - name: Show matrix modules repo
-        run: |
-          echo "${{ matrix.modules.repo }}"
+      # - name: Show matrix modules repo
+      #   run: |
+      #     echo "${{ matrix.modules.repo }}"
 
       - name: Show matrix cloudid
         run: |
@@ -92,9 +121,9 @@ jobs:
         run: |
           echo "${{ matrix.repo }}"
 
-      - name: I can haz if?
-        run: |
-          echo "${{ matrix.if }}"
+      # - name: I can haz if?
+      #   run: |
+      #     echo "${{ matrix.if }}"
   
 
       # - name: Set repo variable based on cloud_id
@@ -118,11 +147,14 @@ jobs:
 
 
 
-      - name: Checkout module repo for ${{ matrix.modules.cloudid }}
+      # - name: Checkout module repo for ${{ matrix.modules.cloudid }}
+      - name: Checkout module repo for ${{ matrix.cloudid }}
         uses: actions/checkout@v3
         with:
-          repository: PaloAltoNetworks/${{ matrix.modules.repo }}
-          path: ${{ matrix.modules.repo }}
+          # repository: PaloAltoNetworks/${{ matrix.modules.repo }}
+          # path: ${{ matrix.modules.repo }}
+          repository: PaloAltoNetworks/${{ matrix.repo }}
+          path: ${{ matrix.repo }}
 
       - name: Checkout local scripts
         # if: steps.check_commit.outputs.changes != 'false'
@@ -147,14 +179,17 @@ jobs:
         # if: steps.check_commit.outputs.changes != 'false'
         run: |
           tree .
-          python ./scripts/process_modules_readmes.py "./${{ matrix.modules.repo }}/modules" "./output/vmseries/modules"
-          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/vmseries/reference-architectures"
+          # python ./scripts/process_modules_readmes.py "./${{ matrix.modules.repo }}/modules" "./output/vmseries/modules"
+          # python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/vmseries/reference-architectures"
+          python ./scripts/process_modules_readmes.py "./${{ matrix.repo }}/modules" "./output/vmseries/modules"
+          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.repo }}/examples" "./output/vmseries/reference-architectures"
       
       - name: Save module readmes
         # if: steps.check_commit.outputs.changes != 'false'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.modules.cloudid }}
+          # name: ${{ matrix.modules.cloudid }}
+          name: ${{ matrix.cloudid }}
           path: output
       
   
