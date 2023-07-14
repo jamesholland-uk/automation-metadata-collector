@@ -43,7 +43,7 @@ jobs:
     name: Generate Matrix
     runs-on: ubuntu-latest
     outputs:
-      modules: ${{ steps.set_modules.outputs.modules }}
+      JSON_ARRAY: ${{ steps.set_modules.outputs.JSON_ARRAY }}
     steps:
       - name: Set modules variable for matrix
         id: set_modules
@@ -51,16 +51,17 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
           case "${{ inputs.cloud-id }}" in
             all)
-              echo "modules={ "modules": [ { "cloudid": "aws", "repo": "terraform-aws-vmseries-modules" }, { "cloudid": "azure", "repo": "terraform-azurerm-vmseries-modules" }, { "cloudid": "gcp", "repo": "terraform-google-vmseries-modules" } ] }" >> $GITHUB_ENV
+              jsonArrayString="{ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }, { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" }, { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }"
+              echo "JSON_ARRAY=$jsonArrayString" >> $GITHUB_ENV
               ;;
             aws)
-              echo "modules={ "modules": [ { "cloudid": "aws", "repo": "terraform-aws-vmseries-modules" } ] }" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             azure)
-              echo "modules={ "modules": [ { "cloudid": "azure", "repo": "terraform-azurerm-vmseries-modules" } ] }" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             gcp)
-              echo "modules={ "modules": [ { "cloudid": "gcp", "repo": "terraform-google-vmseries-modules" } ] }" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
           esac
 
@@ -215,7 +216,7 @@ jobs:
       
       - name: Show modules
         run: |
-          echo "${{ fromJSON(needs.generate-matrix.outputs.modules) }}"
+          echo "${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}"
 
       - name: Show input cloud-id
         run: |
