@@ -75,35 +75,35 @@ jobs:
       matrix:
         include:
           # AWS
-          - github.event.inputs.cloud-id: aws
+          - inputs.cloud-id: aws
             cloudid: aws
             repo: 'terraform-aws-vmseries-modules'
-          - github.event.inputs.cloud-id: all
+          - inputs.cloud-id: all
             cloudid: aws
             repo: 'terraform-aws-vmseries-modules'
           # Azure
-          - github.event.inputs.cloud-id: azure
+          - inputs.cloud-id: azure
             cloudid: azure
             repo: 'terraform-azurerm-vmseries-modules'
-          - github.event.inputs.cloud-id: all
+          - inputs.cloud-id: all
             cloudid: azure
             repo: 'terraform-azurerm-vmseries-modules'
           # GCP
-          - github.event.inputs.cloud-id: gcp
+          - inputs.cloud-id: gcp
             cloudid: gcp
             repo: 'terraform-google-vmseries-modules'
-          - github.event.inputs.cloud-id: all
+          - inputs.cloud-id: all
             cloudid: gcp
             repo: 'terraform-google-vmseries-modules'
 
     steps:
       - name: Show input cloud-id
         run: |
-          echo "${{ github.event.inputs.cloud-id }}"
+          echo "${{ inputs.cloud-id }}"
 
       # - name: Show intput cloudid (fails, must be "cloud-id")
       #   run: |
-      #     echo "${{ github.event.inputs.cloudid }}"
+      #     echo "${{ inputs.cloudid }}"
 
       # - name: Show matrix modules cloudid
       #   run: |
