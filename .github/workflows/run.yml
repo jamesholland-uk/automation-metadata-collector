@@ -61,7 +61,9 @@ jobs:
             modules.repo: 'terraform-azurerm-vmseries-modules'
             if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
           - modules.cloudid: gcp
+            cloudid: gcp
             modules.repo: 'terraform-google-vmseries-modules'
+            repo: 'terraform-google-vmseries-modules'
             # if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
 
     steps:
@@ -69,18 +71,26 @@ jobs:
         run: |
           echo "${{ github.event.inputs.cloud-id }}"
 
-      - name: Show all inputs
+      - name: Show intput cloudid (does this matter?)
         run: |
-          echo "${{ github.event.inputs }}"
+          echo "${{ github.event.inputs.cloudid }}"
 
-      - name: Show matric cloudid
+      - name: Show matrix modules cloudid
         run: |
           echo "${{ matrix.modules.cloudid }}"
  
-      - name: Show matric repo
+      - name: Show matrix modules repo
         run: |
           echo "${{ matrix.modules.repo }}"
-    
+
+      - name: Show matrix cloudid
+        run: |
+          echo "${{ matrix.cloudid }}"
+  
+      - name: Show matrix repo
+        run: |
+          echo "${{ matrix.repo }}"
+  
       # - name: Set repo variable based on cloud_id
       #   run: |
       #     if [[ "${{ matrix.cloud_id }}" == "aws" ]]; then
