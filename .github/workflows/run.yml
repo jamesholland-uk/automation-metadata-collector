@@ -135,7 +135,7 @@ jobs:
     strategy:
       fail-fast: false # treat each job as separate
       matrix:
-        ${{ needs.generate-matrix.outputs.modules }}
+        ${{ fromJSON(needs.generate-matrix.outputs.modules) }}
 
         # include:
         #   # AWS
