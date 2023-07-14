@@ -51,16 +51,16 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
           case "${{ inputs.cloud-id }}" in
             all)
-              echo "modules=[ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }, { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" }, { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ]" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }, { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" }, { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             aws)
-              echo "modules=[ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ]" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             azure)
-              echo "modules=[ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ]" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             gcp)
-              echo "modules=[ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ]" >> $GITHUB_ENV
+              echo "modules={ \"modules\": [ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
           esac
 
