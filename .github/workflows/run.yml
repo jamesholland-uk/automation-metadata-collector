@@ -55,16 +55,19 @@ jobs:
               echo "JSON_ARRAY=$jsonArrayString" >> $GITHUB_ENV
               ;;
             aws)
-              echo "modules={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
+              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             azure)
-              echo "modules={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_ENV
+              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
             gcp)
-              echo "modules={ \"modules\": [ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_ENV
+              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_ENV
               ;;
           esac
 
+      - name: Show JASON
+        run: |
+          echo "${{ fromJSON(JSON_ARRAY) }}"
 
       # - name: Set matrix based on cloud-id
       #   id: matrix
