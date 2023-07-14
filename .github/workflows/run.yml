@@ -135,9 +135,8 @@ jobs:
     needs: generate-matrix
     strategy:
       fail-fast: false # treat each job as separate
-      # HERE
-      # matrix:
-      #   ${{ fromJSON(needs.generate-matrix.outputs.modules) }}
+      matrix:
+        ${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}
 
 
 
@@ -214,9 +213,9 @@ jobs:
 
     steps:
       
-      - name: Show modules
-        run: |
-          echo "${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}"
+      # - name: Show modules
+      #   run: |
+      #     echo "${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}"
 
       - name: Show input cloud-id
         run: |
