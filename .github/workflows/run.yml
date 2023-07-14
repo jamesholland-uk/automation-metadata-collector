@@ -15,21 +15,79 @@ on:
           - azure
           - gcp
 
-jobs:
+jobs:  
   generate-docs:
     name: Generate ${{ matrix.modules.cloudid }} module docs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false # treat each job as separate
+
+      # matrix:
+      #   modules:
+      #     - cloudid: aws
+      #       repo: 'terraform-aws-vmseries-modules'
+      #     - cloudid: azure
+      #       repo: 'terraform-azurerm-vmseries-modules'
+      #     - cloudid: gcp
+      #       repo: 'terraform-google-vmseries-modules'
+
+      # matrix:
+      #   modules:
+      #     - requested_cloud_id: ${{ github.event.inputs.cloudid }}
+      #       include:
+      #         - requested_cloud_id: aws
+      #           cloud_id: aws
+      #           repo: 'terraform-aws-vmseries-modules'
+      #         - requested_cloud_id: azure
+      #           cloud_id: azure
+      #           repo: 'terraform-azurerm-vmseries-modules'
+      #         - requested_cloud_id: gcp
+      #           cloud_id: gcp
+      #           repo: 'terraform-google-vmseries-modules'
+      #         - requested_cloud_id: all
+      #           - cloud_id: aws
+      #             repo: 'terraform-aws-vmseries-modules'
+      #           - cloud_id: azure
+      #             repo: 'terraform-azurerm-vmseries-modules'
+      #           - cloud_id: gcp
+      #             repo: 'terraform-google-vmseries-modules'
+
       matrix:
-        modules:
-          - cloudid: aws
-            repo: 'terraform-aws-vmseries-modules'
-          - cloudid: azure
-            repo: 'terraform-azurerm-vmseries-modules'
-          - cloudid: gcp
-            repo: 'terraform-google-vmseries-modules'
+        include:
+          - modules.cloudid: aws
+            modules.repo: 'terraform-aws-vmseries-modules'
+            if: ${{ github.event.inputs.cloud-id == 'aws' || github.event.inputs.cloud-id == 'all' }}
+          - modules.cloudid: azure
+            modules.repo: 'terraform-azurerm-vmseries-modules'
+            if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
+          - modules.cloudid: gcp
+            modules.repo: 'terraform-google-vmseries-modules'
+            if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
+        
+
+
     steps:
+      # - name: Set repo variable based on cloud_id
+      #   run: |
+      #     if [[ "${{ matrix.cloud_id }}" == "aws" ]]; then
+      #       echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "gcp" ]]; then
+      #       echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "azure" ]]; then
+      #       echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "all" ]]; then
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #     fi
+      #   # To use a $GITHU_OUTPUT var: env.var_name
+
+
+
+
       - name: Checkout module repo for ${{ matrix.modules.cloudid }}
         uses: actions/checkout@v3
         with:
