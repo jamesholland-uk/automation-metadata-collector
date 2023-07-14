@@ -17,7 +17,8 @@ on:
 
 jobs:  
   generate-docs:
-    name: Generate ${{ matrix.modules.cloudid }} module docs
+    # name: Generate ${{ matrix.modules.cloudid }} module docs
+    name: Generate ${{ matrix.cloudid }} module docs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false # treat each job as separate
@@ -71,9 +72,9 @@ jobs:
         run: |
           echo "${{ github.event.inputs.cloud-id }}"
 
-      - name: Show intput cloudid (does this matter?)
-        run: |
-          echo "${{ github.event.inputs.cloudid }}"
+      # - name: Show intput cloudid (does this matter?)
+      #   run: |
+      #     echo "${{ github.event.inputs.cloudid }}"
 
       - name: Show matrix modules cloudid
         run: |
