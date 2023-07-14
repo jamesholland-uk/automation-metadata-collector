@@ -72,7 +72,7 @@ jobs:
         run: |
           echo "${{ github.event.inputs.cloud-id }}"
 
-      # - name: Show intput cloudid (does this matter?)
+      # - name: Show intput cloudid (fails, must be "cloud-id")
       #   run: |
       #     echo "${{ github.event.inputs.cloudid }}"
 
@@ -91,7 +91,12 @@ jobs:
       - name: Show matrix repo
         run: |
           echo "${{ matrix.repo }}"
+
+      - name: I can haz if?
+        run: |
+          echo "${{ matrix.if }}"
   
+
       # - name: Set repo variable based on cloud_id
       #   run: |
       #     if [[ "${{ matrix.cloud_id }}" == "aws" ]]; then
