@@ -26,6 +26,60 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false # treat each job as separate
+      matrix:
+        include:
+
+          # AWS
+          - inputs:
+              cloud-id: aws
+            cloudid: aws
+            repo: 'terraform-aws-vmseries-modules'
+          - inputs:
+              cloud-id: all
+            cloudid: aws
+            repo: 'terraform-aws-vmseries-modules'
+          # Azure
+          - inputs:
+              cloud-id: azure
+            cloudid: azure
+            repo: 'terraform-azurerm-vmseries-modules'
+          - inputs:
+              cloud-id: all
+            cloudid: azure
+            repo: 'terraform-azurerm-vmseries-modules'
+          # GCP
+          - inputs:
+              cloud-id: gcp
+            cloudid: gcp
+            repo: 'terraform-google-vmseries-modules'
+          - inputs:
+              cloud-id: all
+            cloudid: gcp
+            repo: 'terraform-google-vmseries-modules'
+
+
+          # # AWS
+          # - inputs.cloud-id: aws
+          #   cloudid: aws
+          #   repo: 'terraform-aws-vmseries-modules'
+          # - inputs.cloud-id: all
+          #   cloudid: aws
+          #   repo: 'terraform-aws-vmseries-modules'
+          # # Azure
+          # - inputs.cloud-id: azure
+          #   cloudid: azure
+          #   repo: 'terraform-azurerm-vmseries-modules'
+          # - inputs.cloud-id: all
+          #   cloudid: azure
+          #   repo: 'terraform-azurerm-vmseries-modules'
+          # # GCP
+          # - inputs.cloud-id: gcp
+          #   cloudid: gcp
+          #   repo: 'terraform-google-vmseries-modules'
+          # - inputs.cloud-id: all
+          #   cloudid: gcp
+          #   repo: 'terraform-google-vmseries-modules'
+
 
       # matrix:
       #   modules:
@@ -72,29 +126,7 @@ jobs:
       #       if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
 
 
-      matrix:
-        include:
-          # AWS
-          - inputs.cloud-id: aws
-            cloudid: aws
-            repo: 'terraform-aws-vmseries-modules'
-          - inputs.cloud-id: all
-            cloudid: aws
-            repo: 'terraform-aws-vmseries-modules'
-          # Azure
-          - inputs.cloud-id: azure
-            cloudid: azure
-            repo: 'terraform-azurerm-vmseries-modules'
-          - inputs.cloud-id: all
-            cloudid: azure
-            repo: 'terraform-azurerm-vmseries-modules'
-          # GCP
-          - inputs.cloud-id: gcp
-            cloudid: gcp
-            repo: 'terraform-google-vmseries-modules'
-          - inputs.cloud-id: all
-            cloudid: gcp
-            repo: 'terraform-google-vmseries-modules'
+
 
     steps:
       - name: Show input cloud-id
