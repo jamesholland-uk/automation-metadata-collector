@@ -62,9 +62,7 @@ jobs:
             if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
           - modules.cloudid: gcp
             modules.repo: 'terraform-google-vmseries-modules'
-            if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
-        
-
+            # if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
 
     steps:
       # - name: Set repo variable based on cloud_id
