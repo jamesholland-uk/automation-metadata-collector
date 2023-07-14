@@ -56,18 +56,23 @@ jobs:
                 { 'cloudid': 'azure', 'repo': 'terraform-azurerm-vmseries-modules' },
                 { 'cloudid': 'gcp', 'repo': 'terraform-google-vmseries-modules' }
               ]" >> $GITHUB_ENV
+              ;;
             aws)
               echo "modules=[
                 { 'cloudid': 'aws', 'repo': 'terraform-aws-vmseries-modules' },
               ]" >> $GITHUB_ENV
+              ;;
             azure)
               echo "modules=[
                 { 'cloudid': 'azure', 'repo': 'terraform-azurerm-vmseries-modules' },
               ]" >> $GITHUB_ENV
+              ;;
             gcp)
               echo "modules=[
                 { 'cloudid': 'gcp', 'repo': 'terraform-google-vmseries-modules' },
               ]" >> $GITHUB_ENV
+              ;;
+          esac
 
 
       # - name: Set matrix based on cloud-id
