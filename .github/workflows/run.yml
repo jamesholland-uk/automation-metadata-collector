@@ -55,7 +55,8 @@ jobs:
               echo "JSON_ARRAY=$jsonArrayString" >> $GITHUB_ENV
               ;;
             aws)
-              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
+              # echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_ENV
+              echo "JSON_ARRAY={ \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }" >> $GITHUB_ENV
               ;;
             azure)
               echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_ENV
