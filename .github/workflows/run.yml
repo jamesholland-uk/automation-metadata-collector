@@ -15,70 +15,155 @@ on:
           - azure
           - gcp
 
+          #
+          # ORIGINAL MATRIX
+          #
+          # matrix:
+          #   modules:
+          #     - cloudid: aws
+          #       repo: 'terraform-aws-vmseries-modules'
+          #     - cloudid: azure
+          #       repo: 'terraform-azurerm-vmseries-modules'
+          #     - cloudid: gcp
+          #       repo: 'terraform-google-vmseries-modules'
+
+################ PLAN ##############
+#
+# CASE:
+#   aws - GH_OUT: cloud=aws, repo=aws
+#   azure - GH_OUT: cloud=aws, repo=aws
+#   gcp - GH_OUT: cloud=aws, repo=aws
+#   all -  - GH_OUT: cloud=aws, repo=aws, cloud=zure
+
+
+
+
 jobs:
+  generate-matrix:
+    name: Generate Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set_modules.outputs.modules }}
+    steps:
+      - name: Set modules variable for matrix
+        id: set_modules
+        run: |
+          echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
+          case "${{ inputs.cloud-id }}" in
+            all)
+              echo "modules=[
+                { 'cloudid': 'aws', 'repo': 'terraform-aws-vmseries-modules' },
+                { 'cloudid': 'azure', 'repo': 'terraform-azurerm-vmseries-modules' },
+                { 'cloudid': 'gcp', 'repo': 'terraform-google-vmseries-modules' }
+              ]" >> $GITHUB_ENV
+            aws)
+              echo "modules=[
+                { 'cloudid': 'aws', 'repo': 'terraform-aws-vmseries-modules' },
+              ]" >> $GITHUB_ENV
+            azure)
+              echo "modules=[
+                { 'cloudid': 'azure', 'repo': 'terraform-azurerm-vmseries-modules' },
+              ]" >> $GITHUB_ENV
+            gcp)
+              echo "modules=[
+                { 'cloudid': 'gcp', 'repo': 'terraform-google-vmseries-modules' },
+              ]" >> $GITHUB_ENV
+
+
+      # - name: Set matrix based on cloud-id
+      #   id: matrix
+      #   run: |
+      #     echo "::set-output name=matrix::[{}]"
+      #     case "${{ github.event.inputs.cloud-id }}" in
+      #       aws)
+      #         echo "::set-output name=cloudid::aws"
+      #         echo "::set-output name=repo::'terraform-aws-vmseries-modules'"
+      #         ;;
+      #       azure)
+      #         echo "::set-output name=cloudid::azure"
+      #         echo "::set-output name=repo::'terraform-azurerm-vmseries-modules'"
+      #         ;;
+      #       gcp)
+      #         echo "::set-output name=cloudid::gcp"
+      #         echo "::set-output name=repo::'terraform-google-vmseries-modules'"
+      #         ;;
+      #       all)
+      #         echo "::set-output name=cloudid::all"
+      #         echo "::set-output name=repo::'terraform-aws-vmseries-modules', 'terraform-azurerm-vmseries-modules', 'terraform-google-vmseries-modules'"
+      #         ;;
+      #     }
+
   # setup-matrix:
-  #   name: Generate matrix
+  #   name: Create matrix
   #   runs-on: ubuntu-latest
-  
+  #   steps:
+  #     - name: Create matrix variable
+  #       run: |
+  #         echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
+
+  #         if [[ "${{ inputs.cloud_id }}" == "aws" ]]; then
+  #           echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "gcp" ]]; then
+  #           echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "azure" ]]; then
+  #           echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "all" ]]; then
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #         fi
+  #       # To use a $GITHU_OUTPUT var: env.var_name
+
+      # matrix:
+      #   include:
+      #     - modules.cloudid: aws
+      #       modules.repo: 'terraform-aws-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'aws' || inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: azure
+      #       modules.repo: 'terraform-azurerm-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'azure' || inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: gcp
+      #       cloudid: gcp
+      #       modules.repo: 'terraform-google-vmseries-modules'
+      #       repo: 'terraform-google-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'gcp' || inputs.cloud-id == 'all' }}
+
+
   generate-docs:
     # name: Generate ${{ matrix.modules.cloudid }} module docs
     name: Generate ${{ matrix.cloudid }} module docs
     runs-on: ubuntu-latest
+    needs: generate-matrix
     strategy:
       fail-fast: false # treat each job as separate
       matrix:
-        include:
+        ${{ needs.generate-matrix.outputs.modules }}
 
-          # AWS
-          - inputs:
-              cloud-id: aws
-            cloudid: aws
-            repo: 'terraform-aws-vmseries-modules'
-          - inputs:
-              cloud-id: all
-            cloudid: aws
-            repo: 'terraform-aws-vmseries-modules'
-          # Azure
-          - inputs:
-              cloud-id: azure
-            cloudid: azure
-            repo: 'terraform-azurerm-vmseries-modules'
-          - inputs:
-              cloud-id: all
-            cloudid: azure
-            repo: 'terraform-azurerm-vmseries-modules'
-          # GCP
-          - inputs:
-              cloud-id: gcp
-            cloudid: gcp
-            repo: 'terraform-google-vmseries-modules'
-          - inputs:
-              cloud-id: all
-            cloudid: gcp
-            repo: 'terraform-google-vmseries-modules'
-
-
-          # # AWS
-          # - inputs.cloud-id: aws
-          #   cloudid: aws
-          #   repo: 'terraform-aws-vmseries-modules'
-          # - inputs.cloud-id: all
-          #   cloudid: aws
-          #   repo: 'terraform-aws-vmseries-modules'
-          # # Azure
-          # - inputs.cloud-id: azure
-          #   cloudid: azure
-          #   repo: 'terraform-azurerm-vmseries-modules'
-          # - inputs.cloud-id: all
-          #   cloudid: azure
-          #   repo: 'terraform-azurerm-vmseries-modules'
-          # # GCP
-          # - inputs.cloud-id: gcp
-          #   cloudid: gcp
-          #   repo: 'terraform-google-vmseries-modules'
-          # - inputs.cloud-id: all
-          #   cloudid: gcp
-          #   repo: 'terraform-google-vmseries-modules'
+        # include:
+        #   # AWS
+        #   - inputs.cloud-id: aws
+        #     cloudid: aws
+        #     repo: 'terraform-aws-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: aws
+        #     repo: 'terraform-aws-vmseries-modules'
+        #   # Azure
+        #   - inputs.cloud-id: azure
+        #     cloudid: azure
+        #     repo: 'terraform-azurerm-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: azure
+        #     repo: 'terraform-azurerm-vmseries-modules'
+        #   # GCP
+        #   - inputs.cloud-id: gcp
+        #     cloudid: gcp
+        #     repo: 'terraform-google-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: gcp
+        #     repo: 'terraform-google-vmseries-modules'
 
 
       # matrix:
