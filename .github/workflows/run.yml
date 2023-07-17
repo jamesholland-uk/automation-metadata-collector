@@ -27,16 +27,16 @@ jobs:
         id: process_cloud_choice
         run: |
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            JSON="{ [ \"aws\" ] }"
+            JSON="{ \"selected_clouds\" : [ \"aws\" ] }"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            JSON="{ [ \"azure\" ] }"
+            JSON="{ \"selected_clouds\" : [ \"azure\" ] }"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            JSON="{ [ \"gcp\" ] }"
+            JSON="{ \"selected_clouds\" : [ \"gcp\" ] }"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            JSON="{ [ \"aws\", \"azure\", \"gcp\" ] }"
+            JSON="{ \"selected_clouds\" : [ \"aws\", \"azure\", \"gcp\" ] }"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           fi
 
@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false # treat each job as separate
       matrix:
-        cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}
+        cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds).selected_clouds }}
 
     steps:
       - name: Set repo env
