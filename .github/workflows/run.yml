@@ -69,7 +69,6 @@ jobs:
 
               echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
               echo "ENV REPO: ${{ env.repo }}"
-              echo "REPO: ${{ repo }}"
 
       - name: Checkout module repo for ${{ matrix.modules.cloudid }}
         uses: actions/checkout@v3
