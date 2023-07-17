@@ -31,7 +31,8 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
 
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            JSON="{ \"cloud_list\": [ \"aws\" ] }"
+            JSON_OLD="{ \"cloud_list\": [ \"aws\" ] }"
+            JSON="{ [ \"aws\" ] }"
             echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
@@ -55,8 +56,8 @@ jobs:
       repo: ''
     strategy:
       fail-fast: false # treat each job as separate
-    #   matrix:
-    #     cloudid: ${{ needs.generate-matrix.outputs.clouds }}
+      matrix:
+        cloudid: ${{ needs.generate-matrix.outputs.clouds }}
 
     steps:
       - name: Set repo env
