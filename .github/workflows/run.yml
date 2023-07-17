@@ -20,36 +20,26 @@ jobs:
   generate-matrix:
     name: Generate Matrix
     runs-on: ubuntu-latest
-    # env:
-    #   clouds: ''
     outputs:
       clouds: ${{ steps.process_cloud_choice.outputs.clouds }}
     steps:
       - name: Process choice of cloud(s) for matrix
         id: process_cloud_choice
         run: |
-          echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
-
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
             JSON="{ \"clouds\" : [ \"aws\" ] }"
-            echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
             JSON="{ \"clouds\" : [ \"azure\" ] }"
-            echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
             JSON="{ \"clouds\" : [ \"gcp\" ] }"
-            echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
             JSON="{ \"clouds\" : [ \"aws\", \"azure\", \"gcp\" ] }"
-            echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           fi
 
-      - name: Show CLOUDS
-        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
   generate-docs:
     name: Generate ${{ matrix.cloudid }} module docs
@@ -61,19 +51,6 @@ jobs:
         cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds).clouds }}
 
     steps:
-
-      - name: Show CLOUDS 1
-        run: echo "${{ needs.generate-matrix.outputs.clouds }}"
-
-      - name: Show CLOUDS 1a
-        run: echo "${{ toJSON(needs.generate-matrix.outputs.clouds) }}"
-
-      - name: Show CLOUDS 2
-        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
-
-      - name: Show CLOUDS 3
-        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds).clouds }}"
-
       - name: Set repo env
         run: |
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
@@ -83,8 +60,6 @@ jobs:
           elif [[ "${{ matrix.cloudid }}" == "gcp" ]]; then
               echo "repo=terraform-google-vmseries-modules" >> $GITHUB_ENV
           fi
-
-          echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
 
       - name: Checkout module repo for ${{ matrix.cloudid }}
         uses: actions/checkout@v3
