@@ -31,19 +31,21 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
 
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            echo "clouds={ \"cloud_list\": [ \"aws\" ] }" >> $GITHUB_ENV
+            JSON="{ \"cloud_list\": [ \"aws\" ] }"
+            echo "JSON IS: $JSON"
+            echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            echo "clouds=['azure']" >> $GITHUB_ENV
+            echo "clouds=['azure']" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            echo "clouds=['gcp']" >> $GITHUB_ENV
+            echo "clouds=['gcp']" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
+            echo "clouds=['aws','azure','gcp']" >> $GITHUB_OUTPUT
           fi
 
         #   echo "${{ env.clouds }}"
 
-    #   - name: Show CLOUDS
-    #     run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
+      - name: Show CLOUDS
+        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
   generate-docs:
     name: Generate ${{ matrix.cloudid }} module docs
