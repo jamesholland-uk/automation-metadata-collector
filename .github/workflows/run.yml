@@ -15,110 +15,308 @@ on:
           - azure
           - gcp
 
-jobs:
+          #
+          # ORIGINAL MATRIX
+          #
+          # matrix:
+          #   modules:
+          #     - cloudid: aws
+          #       repo: 'terraform-aws-vmseries-modules'
+          #     - cloudid: azure
+          #       repo: 'terraform-azurerm-vmseries-modules'
+          #     - cloudid: gcp
+          #       repo: 'terraform-google-vmseries-modules'
 
+################ PLAN ##############
+#
+# CASE:
+#   aws - GH_OUT: cloud=aws, repo=aws
+#   azure - GH_OUT: cloud=aws, repo=aws
+#   gcp - GH_OUT: cloud=aws, repo=aws
+#   all -  - GH_OUT: cloud=aws, repo=aws, cloud=zure
+
+
+
+
+jobs:
   generate-matrix:
     name: Generate Matrix
     runs-on: ubuntu-latest
-    # env:
-    #   clouds: ''
     outputs:
-      clouds: ${{ steps.process_cloud_choice.outputs.clouds }}
+      JSON_ARRAY: ${{ steps.set_modules.outputs.JSON_ARRAY }}
     steps:
-      - name: Process choice of cloud(s) for matrix
-        id: process_cloud_choice
+      - name: Set modules variable for matrix
+        id: set_modules
         run: |
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
+          case "${{ inputs.cloud-id }}" in
+            all)
+              jsonArrayString="{ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }, { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" }, { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }"
+              echo "JSON_ARRAY=$jsonArrayString" >> $GITHUB_OUTPUT
+              ;;
+            aws)
+              # echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" } ] }" >> $GITHUB_OUTPUT
+              echo "JSON_ARRAY={ \"cloudid\": \"aws\", \"repo\": \"terraform-aws-vmseries-modules\" }" >> $GITHUB_OUTPUT
+              ;;
+            azure)
+              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"azure\", \"repo\": \"terraform-azurerm-vmseries-modules\" } ] }" >> $GITHUB_OUTPUT
+              ;;
+            gcp)
+              echo "JSON_ARRAY={ \"modules\": [ { \"cloudid\": \"gcp\", \"repo\": \"terraform-google-vmseries-modules\" } ] }" >> $GITHUB_OUTPUT
+              ;;
+          esac
 
-          if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            JSON="{ \"cloud_list\": [ \"aws\" ] }"
-            echo "JSON IS: $JSON"
-            echo "clouds=$JSON" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            echo "clouds=['azure']" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            echo "clouds=['gcp']" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            echo "clouds=['aws','azure','gcp']" >> $GITHUB_OUTPUT
-          fi
+      - name: Show JASON
+        run: |
+          echo "$JSON_ARRAY"
+      - name: Show JASON_NOT
+        run: |
+          echo "${{ fromJSON('{ "modules": [ { "cloudid": "aws", "repo": "terraform-aws-vmseries-modules" }, { "cloudid": "azure", "repo": "terraform-azurerm-vmseries-modules" }, { "cloudid": "gcp", "repo": "terraform-google-vmseries-modules" } ] }').cloudid }}"
 
-        #   echo "${{ env.clouds }}"
+      # - name: Set matrix based on cloud-id
+      #   id: matrix
+      #   run: |
+      #     echo "::set-output name=matrix::[{}]"
+      #     case "${{ github.event.inputs.cloud-id }}" in
+      #       aws)
+      #         echo "::set-output name=cloudid::aws"
+      #         echo "::set-output name=repo::'terraform-aws-vmseries-modules'"
+      #         ;;
+      #       azure)
+      #         echo "::set-output name=cloudid::azure"
+      #         echo "::set-output name=repo::'terraform-azurerm-vmseries-modules'"
+      #         ;;
+      #       gcp)
+      #         echo "::set-output name=cloudid::gcp"
+      #         echo "::set-output name=repo::'terraform-google-vmseries-modules'"
+      #         ;;
+      #       all)
+      #         echo "::set-output name=cloudid::all"
+      #         echo "::set-output name=repo::'terraform-aws-vmseries-modules', 'terraform-azurerm-vmseries-modules', 'terraform-google-vmseries-modules'"
+      #         ;;
+      #     }
 
-      - name: Show CLOUDS
-        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
+  # setup-matrix:
+  #   name: Create matrix
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Create matrix variable
+  #       run: |
+  #         echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
+
+  #         if [[ "${{ inputs.cloud_id }}" == "aws" ]]; then
+  #           echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "gcp" ]]; then
+  #           echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "azure" ]]; then
+  #           echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
+  #         elif [[ "${{ inputs.cloud_id }}" == "all" ]]; then
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #           echo "::set-output name=repo::azure-repo"
+  #         fi
+  #       # To use a $GITHU_OUTPUT var: env.var_name
+
+      # matrix:
+      #   include:
+      #     - modules.cloudid: aws
+      #       modules.repo: 'terraform-aws-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'aws' || inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: azure
+      #       modules.repo: 'terraform-azurerm-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'azure' || inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: gcp
+      #       cloudid: gcp
+      #       modules.repo: 'terraform-google-vmseries-modules'
+      #       repo: 'terraform-google-vmseries-modules'
+      #       if: ${{ inputs.cloud-id == 'gcp' || inputs.cloud-id == 'all' }}
+
 
   generate-docs:
+    # name: Generate ${{ matrix.modules.cloudid }} module docs
     name: Generate ${{ matrix.cloudid }} module docs
     runs-on: ubuntu-latest
     needs: generate-matrix
-    env:
-      repo: ''
     strategy:
       fail-fast: false # treat each job as separate
-    #   matrix:
-    #     cloudid: ${{ needs.generate-matrix.outputs.clouds }}
+      matrix:
+        ${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}
+
+
+
+        # include:
+        #   # AWS
+        #   - inputs.cloud-id: aws
+        #     cloudid: aws
+        #     repo: 'terraform-aws-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: aws
+        #     repo: 'terraform-aws-vmseries-modules'
+        #   # Azure
+        #   - inputs.cloud-id: azure
+        #     cloudid: azure
+        #     repo: 'terraform-azurerm-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: azure
+        #     repo: 'terraform-azurerm-vmseries-modules'
+        #   # GCP
+        #   - inputs.cloud-id: gcp
+        #     cloudid: gcp
+        #     repo: 'terraform-google-vmseries-modules'
+        #   - inputs.cloud-id: all
+        #     cloudid: gcp
+        #     repo: 'terraform-google-vmseries-modules'
+
+
+      # matrix:
+      #   modules:
+      #     - cloudid: aws
+      #       repo: 'terraform-aws-vmseries-modules'
+      #     - cloudid: azure
+      #       repo: 'terraform-azurerm-vmseries-modules'
+      #     - cloudid: gcp
+      #       repo: 'terraform-google-vmseries-modules'
+
+      # matrix:
+      #   modules:
+      #     - requested_cloud_id: ${{ github.event.inputs.cloudid }}
+      #       include:
+      #         - requested_cloud_id: aws
+      #           cloud_id: aws
+      #           repo: 'terraform-aws-vmseries-modules'
+      #         - requested_cloud_id: azure
+      #           cloud_id: azure
+      #           repo: 'terraform-azurerm-vmseries-modules'
+      #         - requested_cloud_id: gcp
+      #           cloud_id: gcp
+      #           repo: 'terraform-google-vmseries-modules'
+      #         - requested_cloud_id: all
+      #           - cloud_id: aws
+      #             repo: 'terraform-aws-vmseries-modules'
+      #           - cloud_id: azure
+      #             repo: 'terraform-azurerm-vmseries-modules'
+      #           - cloud_id: gcp
+      #             repo: 'terraform-google-vmseries-modules'
+
+      # matrix:
+      #   include:
+      #     - modules.cloudid: aws
+      #       modules.repo: 'terraform-aws-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'aws' || github.event.inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: azure
+      #       modules.repo: 'terraform-azurerm-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'azure' || github.event.inputs.cloud-id == 'all' }}
+      #     - modules.cloudid: gcp
+      #       cloudid: gcp
+      #       modules.repo: 'terraform-google-vmseries-modules'
+      #       repo: 'terraform-google-vmseries-modules'
+      #       if: ${{ github.event.inputs.cloud-id == 'gcp' || github.event.inputs.cloud-id == 'all' }}
+
+
+
 
     steps:
-      - name: Set repo env
-        env:
-          TEMP: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}
-        run: |
-          echo "CLOUDS MATRIX: $TEMP"
-
-          if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
-              echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.cloudid }}" == "gcp" ]]; then
-              echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
-          elif [[ "${{ matrix.cloudid }}" == "azure" ]]; then
-              echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
-              fi
-
-              echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
-              echo "ENV REPO: ${{ env.repo }}"
-
-      - name: Checkout module repo for ${{ matrix.modules.cloudid }}
-        uses: actions/checkout@v3
-        with:
-          repository: PaloAltoNetworks/${{ matrix.modules.repo }}
-          path: ${{ matrix.modules.repo }}
       
-      - name: Checkout module repo for ${{ matrix.modules.cloudid }}
+      # - name: Show modules
+      #   run: |
+      #     echo "${{ fromJSON(needs.generate-matrix.outputs.JSON_ARRAY) }}"
+
+      - name: Show input cloud-id
+        run: |
+          echo "${{ inputs.cloud-id }}"
+
+      # - name: Show intput cloudid (fails, must be "cloud-id")
+      #   run: |
+      #     echo "${{ inputs.cloudid }}"
+
+      # - name: Show matrix modules cloudid
+      #   run: |
+      #     echo "${{ matrix.modules.cloudid }}"
+ 
+      # - name: Show matrix modules repo
+      #   run: |
+      #     echo "${{ matrix.modules.repo }}"
+
+      - name: Show matrix cloudid
+        run: |
+          echo "${{ matrix.cloudid }}"
+  
+      - name: Show matrix repo
+        run: |
+          echo "${{ matrix.repo }}"
+
+      # - name: I can haz if?
+      #   run: |
+      #     echo "${{ matrix.if }}"
+  
+
+      # - name: Set repo variable based on cloud_id
+      #   run: |
+      #     if [[ "${{ matrix.cloud_id }}" == "aws" ]]; then
+      #       echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "gcp" ]]; then
+      #       echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "azure" ]]; then
+      #       echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
+      #     elif [[ "${{ matrix.cloud_id }}" == "all" ]]; then
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #       echo "::set-output name=repo::azure-repo"
+      #     fi
+      #   # To use a $GITHU_OUTPUT var: env.var_name
+
+
+
+
+      # - name: Checkout module repo for ${{ matrix.modules.cloudid }}
+      - name: Checkout module repo for ${{ matrix.cloudid }}
         uses: actions/checkout@v3
         with:
-          repository: PaloAltoNetworks/${{ matrix.modules.repo }}
-          path: ${{ matrix.modules.repo }}
-        
+          # repository: PaloAltoNetworks/${{ matrix.modules.repo }}
+          # path: ${{ matrix.modules.repo }}
+          repository: PaloAltoNetworks/${{ matrix.repo }}
+          path: ${{ matrix.repo }}
+
       - name: Checkout local scripts
         # if: steps.check_commit.outputs.changes != 'false'
         uses: actions/checkout@v3
         with:
           path: 'scripts'
-        
+
       - name: Setup Python
         # if: steps.check_commit.outputs.changes != 'false'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
           cache: 'pip' # caching pip dependencies
-        
+
       - name: Install Python Dependencies
         # if: steps.check_commit.outputs.changes != 'false'
         run: |
           python -m pip install --upgrade pip
           pip install -r ./scripts/requirements.txt
-        
+
       - name: Generate module readmes for pan.dev
         # if: steps.check_commit.outputs.changes != 'false'
         run: |
           tree .
-          python ./scripts/process_modules_readmes.py "./${{ matrix.modules.repo }}/modules" "./output/vmseries/modules"
-          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/vmseries/reference-architectures"
-              
+          # python ./scripts/process_modules_readmes.py "./${{ matrix.modules.repo }}/modules" "./output/vmseries/modules"
+          # python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/vmseries/reference-architectures"
+          python ./scripts/process_modules_readmes.py "./${{ matrix.repo }}/modules" "./output/vmseries/modules"
+          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.repo }}/examples" "./output/vmseries/reference-architectures"
+      
       - name: Save module readmes
         # if: steps.check_commit.outputs.changes != 'false'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.modules.cloudid }}
+          # name: ${{ matrix.modules.cloudid }}
+          name: ${{ matrix.cloudid }}
           path: output
       
   
@@ -204,3 +402,4 @@ jobs:
         if: steps.create-pull-request.outputs.pull-request-number
         run: |
           echo "::notice ::PR ${{ steps.create-pull-request.outputs.pull-request-operation }}: ${{ steps.create-pull-request.outputs.pull-request-url }}"
+        
