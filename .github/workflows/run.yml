@@ -41,7 +41,9 @@ jobs:
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
             echo "clouds=['gcp']" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            echo "clouds=['aws','azure','gcp']" >> $GITHUB_OUTPUT
+            JSON="{ \"clouds\" : [ \"aws\", \"azure\", \"google\" ] }"
+            echo "JSON IS: $JSON"
+            echo "clouds=$JSON" >> $GITHUB_OUTPUT
           fi
 
         #   echo "${{ env.clouds }}"
@@ -57,13 +59,13 @@ jobs:
       repo: ''
     strategy:
       fail-fast: false # treat each job as separate
-      matrix:
-        cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds.clouds) }}
+      # matrix:
+      #   cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds.clouds) }}
 
     steps:
       - name: Set repo env
         run: |
-          echo "CLOUDS MATRIX: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
+          echo "CLOUDS MATRIX: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}.clouds"
 
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
