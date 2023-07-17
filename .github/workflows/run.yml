@@ -26,8 +26,7 @@ jobs:
         id: process_cloud_choice
         run: |
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            JSON="{ \"selected_clouds\" : [ \"aws\" ] }"
-            echo "clouds=$JSON" >> $GITHUB_OUTPUT
+            echo "clouds={ \"selected_clouds\" : [ \"aws\" ] }" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
             JSON="{ \"selected_clouds\" : [ \"azure\" ] }"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
