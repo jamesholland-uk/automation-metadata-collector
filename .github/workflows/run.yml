@@ -16,7 +16,6 @@ on:
           - gcp
 
 jobs:
-
   generate-matrix:
     name: Generate Matrix
     runs-on: ubuntu-latest
