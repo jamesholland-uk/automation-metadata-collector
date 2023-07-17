@@ -75,7 +75,7 @@ jobs:
         run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
 
       - name: Show CLOUDS 3
-        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds.clouds) }}"
+        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds).clouds }}"
 
       - name: Set repo env
         run: |
