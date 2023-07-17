@@ -42,7 +42,7 @@ jobs:
               ;;
           esac    
       - name: Show CLOUDS
-        run: echo "${{ clouds }}"
+        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
   generate-docs:
     name: Generate ${{ matrix.cloudid }} module docs
