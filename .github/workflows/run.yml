@@ -31,19 +31,19 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
 
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            echo "clouds=('aws')" >> $GITHUB_ENV
+            echo "clouds={ \"cloud_list\": [ \"aws\" ] }" >> $GITHUB_ENV
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            echo "clouds=('azure')" >> $GITHUB_ENV
+            echo "clouds=['azure']" >> $GITHUB_ENV
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            echo "clouds=('gcp')" >> $GITHUB_ENV
+            echo "clouds=['gcp']" >> $GITHUB_ENV
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            echo "clouds=('aws','azure','gcp')" >> $GITHUB_ENV
+            echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
           fi
 
         #   echo "${{ env.clouds }}"
 
-      - name: Show CLOUDS
-        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
+    #   - name: Show CLOUDS
+    #     run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
   generate-docs:
     name: Generate ${{ matrix.cloudid }} module docs
@@ -60,6 +60,7 @@ jobs:
       - name: Set repo env
         run: |
           echo "CLOUDS MATRIX: ${{ needs.generate-matrix.outputs.clouds }}" # echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
+          echo "CLOUDS MATRIX FROM JASON: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
 
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
