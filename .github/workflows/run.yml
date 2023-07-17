@@ -19,23 +19,20 @@ jobs:
   generate-matrix:
     name: Generate Matrix
     runs-on: ubuntu-latest
-    outputs:
+    outputs: # this job outputs a matrix for the next job
       clouds: ${{ steps.process_cloud_choice.outputs.clouds }}
-    steps:
+    steps: # this step looks at the cloud inputs and creates a relevant matrix for the next job
       - name: Process choice of cloud(s) for matrix
         id: process_cloud_choice
         run: |
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
             echo "clouds={ \"selected_clouds\" : [ \"aws\" ] }" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            JSON="{ \"selected_clouds\" : [ \"azure\" ] }"
-            echo "clouds=$JSON" >> $GITHUB_OUTPUT
+            echo "clouds={ \"selected_clouds\" : [ \"azure\" ] }" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            JSON="{ \"selected_clouds\" : [ \"gcp\" ] }"
-            echo "clouds=$JSON" >> $GITHUB_OUTPUT
+            echo "clouds={ \"selected_clouds\" : [ \"gcp\" ] }" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            JSON="{ \"selected_clouds\" : [ \"aws\", \"azure\", \"gcp\" ] }"
-            echo "clouds=$JSON" >> $GITHUB_OUTPUT
+            echo "clouds={ \"selected_clouds\" : [ \"aws\", \"azure\", \"gcp\" ] }" >> $GITHUB_OUTPUT
           fi
 
 
@@ -45,11 +42,11 @@ jobs:
     needs: generate-matrix
     strategy:
       fail-fast: false # treat each job as separate
-      matrix:
+      matrix: # matrix comes from previous job
         cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds).selected_clouds }}
 
     steps:
-      - name: Set repo env
+      - name: Set cloud-specific repo env
         run: |
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_ENV
