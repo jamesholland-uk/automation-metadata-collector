@@ -56,8 +56,6 @@ jobs:
     name: Generate ${{ matrix.cloudid }} module docs
     runs-on: ubuntu-latest
     needs: generate-matrix
-    env:
-      repo: ''
     strategy:
       fail-fast: false # treat each job as separate
       matrix:
@@ -88,13 +86,12 @@ jobs:
           fi
 
           echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
-          echo "ENV REPO: ${{ env.repo }}"
 
-      - name: Checkout module repo for ${{ matrix.modules.cloudid }}
+      - name: Checkout module repo for ${{ matrix.cloudid }}
         uses: actions/checkout@v3
         with:
-          repository: PaloAltoNetworks/${{ matrix.modules.repo }}
-          path: ${{ matrix.modules.repo }}
+          repository: PaloAltoNetworks/${{ env.repo }}
+          path: ${{ env.repo }}
         
       - name: Checkout local scripts
         # if: steps.check_commit.outputs.changes != 'false'
@@ -119,14 +116,14 @@ jobs:
         # if: steps.check_commit.outputs.changes != 'false'
         run: |
           tree .
-          python ./scripts/process_modules_readmes.py "./${{ matrix.modules.repo }}/modules" "./output/vmseries/modules"
-          python ./scripts/process_modules_readmes.py --type refarch "./${{ matrix.modules.repo }}/examples" "./output/vmseries/reference-architectures"
+          python ./scripts/process_modules_readmes.py "./${{ env.repo }}/modules" "./output/vmseries/modules"
+          python ./scripts/process_modules_readmes.py --type refarch "./${{ env.repo }}/examples" "./output/vmseries/reference-architectures"
               
       - name: Save module readmes
         # if: steps.check_commit.outputs.changes != 'false'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.modules.cloudid }}
+          name: ${{ matrix.cloudid }}
           path: output
       
   
