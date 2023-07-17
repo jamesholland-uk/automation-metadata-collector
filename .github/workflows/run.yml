@@ -80,11 +80,11 @@ jobs:
       - name: Set repo env
         run: |
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
-              echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
+              echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_ENV
           elif [[ "${{ matrix.cloudid }}" == "gcp" ]]; then
-              echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_OUTPUT
+              echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_ENV
           elif [[ "${{ matrix.cloudid }}" == "azure" ]]; then
-              echo "repo=terraform-google-vmseries-modules" >> $GITHUB_OUTPUT
+              echo "repo=terraform-google-vmseries-modules" >> $GITHUB_ENV
           fi
 
           echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
