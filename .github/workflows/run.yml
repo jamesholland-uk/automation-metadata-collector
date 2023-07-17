@@ -34,7 +34,7 @@ jobs:
             JSON_OLD="{ \"cloud_list\": [ \"aws\" ] }"
             JSON_OLD2="{\"include\": [ \"aws\" ] }"
             JSON_FAKE="{ \"client_payload\" : { \"versions\" : [12, 14, 16] } }"
-            JSON="{ clouds : [ aws ] }"
+            JSON="{ \"clouds\" : [ \"aws\" ] }"
             echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
@@ -66,13 +66,13 @@ jobs:
     steps:
 
       - name: Show CLOUDS 1
-        run: echo "CLOUDS MATRIX ${{ needs.generate-matrix.outputs.clouds }}"
+        run: echo "${{ needs.generate-matrix.outputs.clouds }}"
 
       - name: Show CLOUDS 2
-        run: echo "CLOUDS MATRIX ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
+        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
 
       - name: Show CLOUDS 3
-        run: echo "CLOUDS MATRIX ${{ fromJSON(needs.generate-matrix.outputs.clouds.clouds) }}"
+        run: echo "${{ fromJSON(needs.generate-matrix.outputs.clouds.clouds) }}"
 
       - name: Set repo env
         run: |
