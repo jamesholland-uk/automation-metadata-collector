@@ -20,8 +20,8 @@ jobs:
   generate-matrix:
     name: Generate Matrix
     runs-on: ubuntu-latest
-    env:
-      clouds: ''
+    # env:
+    #   clouds: ''
     outputs:
       clouds: ${{ steps.process_cloud_choice.outputs.clouds }}
     steps:
@@ -40,10 +40,10 @@ jobs:
             echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
           fi
 
-          echo "${{ env.clouds }}"
+        #   echo "${{ env.clouds }}"
 
-      - name: Show CLOUDS
-        run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
+    #   - name: Show CLOUDS
+    #     run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
   generate-docs:
     name: Generate ${{ matrix.cloudid }} module docs
@@ -53,13 +53,13 @@ jobs:
       repo: ''
     strategy:
       fail-fast: false # treat each job as separate
-      matrix:
-        cloudid: ${{ needs.generate-matrix.outputs.clouds }}
+    #   matrix:
+    #     cloudid: ${{ needs.generate-matrix.outputs.clouds }}
 
     steps:
       - name: Set repo env
         run: |
-          echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
+          echo "CLOUDS MATRIX ${{ needs.generate-matrix.outputs.clouds }}" # echo "MATRIX CLOUD ID: ${{ matrix.cloudid }}"
 
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
