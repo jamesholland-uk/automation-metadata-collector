@@ -58,9 +58,10 @@ jobs:
 
     steps:
       - name: Set repo env
+        env:
+          TEMP: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}
         run: |
-          echo "CLOUDS MATRIX TO_J: ${{ toJSON(needs.generate-matrix.outputs.clouds) }}"
-          echo "CLOUDS MATRIX FROM_J: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}"
+          echo "CLOUDS MATRIX: $TEMP"
 
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_OUTPUT
