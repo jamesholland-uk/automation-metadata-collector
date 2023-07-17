@@ -33,7 +33,7 @@ jobs:
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
             JSON_OLD="{ \"cloud_list\": [ \"aws\" ] }"
             JSON_OLD2="{\"include\": [ \"aws\" ] }"
-            JSON="{ \"aws\" }"
+            JSON="{ \"clouds\" : [ \"aws\" ] }"
             echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
