@@ -114,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.modules.cloudid }}
-            path: output
+          path: output
       
   
   sync-to-pan-dev:
