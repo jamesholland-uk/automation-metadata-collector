@@ -57,7 +57,7 @@ jobs:
     strategy:
       fail-fast: false # treat each job as separate
       matrix:
-        cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds) }}
+        cloudid: ${{ fromJSON(needs.generate-matrix.outputs.clouds.include) }}
 
     steps:
       - name: Set repo env
