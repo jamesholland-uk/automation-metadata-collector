@@ -31,23 +31,22 @@ jobs:
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
 
           if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
-            JSON_OLD="{ \"cloud_list\": [ \"aws\" ] }"
-            JSON_OLD2="{\"include\": [ \"aws\" ] }"
-            JSON_FAKE="{ \"client_payload\" : { \"versions\" : [12, 14, 16] } }"
             JSON="{ \"clouds\" : [ \"aws\" ] }"
             echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
-            echo "clouds=['azure']" >> $GITHUB_OUTPUT
+            JSON="{ \"clouds\" : [ \"azure\" ] }"
+            echo "JSON IS: $JSON"
+            echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
-            echo "clouds=['gcp']" >> $GITHUB_OUTPUT
+            JSON="{ \"clouds\" : [ \"gcp\" ] }"
+            echo "JSON IS: $JSON"
+            echo "clouds=$JSON" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
-            JSON="{ \"clouds\" : [ \"aws\", \"azure\", \"google\" ] }"
+            JSON="{ \"clouds\" : [ \"aws\", \"azure\", \"gcp\" ] }"
             echo "JSON IS: $JSON"
             echo "clouds=$JSON" >> $GITHUB_OUTPUT
           fi
-
-        #   echo "${{ env.clouds }}"
 
       - name: Show CLOUDS
         run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
@@ -79,9 +78,9 @@ jobs:
         run: |
           if [[ "${{ matrix.cloudid }}" == "aws" ]]; then
               echo "repo=terraform-aws-vmseries-modules" >> $GITHUB_ENV
-          elif [[ "${{ matrix.cloudid }}" == "gcp" ]]; then
-              echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_ENV
           elif [[ "${{ matrix.cloudid }}" == "azure" ]]; then
+              echo "repo=terraform-azurerm-vmseries-modules" >> $GITHUB_ENV
+          elif [[ "${{ matrix.cloudid }}" == "gcp" ]]; then
               echo "repo=terraform-google-vmseries-modules" >> $GITHUB_ENV
           fi
 
