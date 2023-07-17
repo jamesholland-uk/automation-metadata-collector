@@ -27,20 +27,31 @@ jobs:
         id: process_cloud_choice
         run: |
           echo "CLOUD ID INPUT: ${{ inputs.cloud-id }}"
-          case "${{ inputs.cloud-id }}" in
-            all)
-              echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
-              ;;
-            aws)
-              echo "clouds=['aws']" >> $GITHUB_ENV
-              ;;
-            azure)
-              echo "clouds=['azure']" >> $GITHUB_ENV
-              ;;
-            gcp)
-              echo "clouds=['gcp']" >> $GITHUB_ENV
-              ;;
-          esac    
+
+          if [[ "${{ inputs.cloud-id }}" == "aws" ]]; then
+            echo "clouds=['aws']" >> $GITHUB_ENV
+          elif [[ "${{ inputs.cloud-id }}" == "azure" ]]; then
+            echo "clouds=['azure']" >> $GITHUB_ENV
+          elif [[ "${{ inputs.cloud-id }}" == "gcp" ]]; then
+            echo "clouds=['gcp']" >> $GITHUB_ENV
+          elif [[ "${{ inputs.cloud-id }}" == "all" ]]; then
+            echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
+          fi          
+
+        #   case "${{ inputs.cloud-id }}" in
+        #     all)
+        #       echo "clouds=['aws','azure','gcp']" >> $GITHUB_ENV
+        #       ;;
+        #     aws)
+        #       echo "clouds=['aws']" >> $GITHUB_ENV
+        #       ;;
+        #     azure)
+        #       echo "clouds=['azure']" >> $GITHUB_ENV
+        #       ;;
+        #     gcp)
+        #       echo "clouds=['gcp']" >> $GITHUB_ENV
+        #       ;;
+        #   esac    
       - name: Show CLOUDS
         run: echo "${{ steps.process_cloud_choice.outputs.clouds }}"
 
