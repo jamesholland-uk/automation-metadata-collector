@@ -421,6 +421,36 @@ def convert_cloud_id(cloud_id: str) -> str:
         raise ValueError("Unrecognized cloud_id:" + cloud_id)
 
 
+def replace_relative_paths(url):
+    """Searches for links using relative paths (originally used in github.com) and suitably alters them for use in pan.dev
+
+    Args:
+        url (str): The string to be processed.
+
+    Returns:
+        str: The string with the amended paths.
+
+    Example:
+        >>> url = 'Visit the documentation at (../vmseries/README.md) for more information.'
+        >>> replaced_url = replace_file_name(url)
+        >>> print(replaced_url)
+        'Visit the documentation at (../vmseries/) for more information.'
+    """
+    # Where there is 'something/README.me', we need to have just 'something' (remove 'README.me').
+    readme_pattern = r'\(\.\./([^)]+)/README\.md([^)]*)\)'
+    readme_replacement = r'(../\1\2)'
+    modified_string = re.sub(readme_pattern, readme_replacement, url)
+    
+    # Where there is a link to '../../examples/something', point to Terraform Registry.
+    # We may or may not have a Ref Arch listed that matches the 'something', so
+    # safer to point there than a pan.dev link.
+    examples_pattern = r'\(\.\./\.\.(/examples/[^)]+)\)'
+    examples_replacement = r'(https://registry.terraform.io/modules/PaloAltoNetworks/vmseries-modules/aws/latest\1)'
+    modified_string = re.sub(examples_pattern, examples_replacement, modified_string)
+    
+    return modified_string
+
+
 def main(modules_directory: str, dest_directory: str, module_type: str = None):
     """Main function
 
