@@ -421,6 +421,7 @@ def convert_cloud_id(cloud_id: str) -> str:
         raise ValueError("Unrecognized cloud_id:" + cloud_id)
 
 
+
 def replace_relative_paths(url):
     """Searches for links using relative paths (originally used in github.com) and suitably alters them for use in pan.dev
 
@@ -471,6 +472,7 @@ def main(modules_directory: str, dest_directory: str, module_type: str = None):
         readme_images = download_images(module)
         new_readme_contents = set_new_frontmatter(module)
         new_readme_contents = replace_image_urls(new_readme_contents)
+        new_readme_contents = replace_relative_paths(new_readme_contents)
         new_readme_contents = sanitize_readme_contents(new_readme_contents)
         new_readme_contents = insert_external_links(new_readme_contents, modules_directory, module.slug, module.cloud_id)
         dest_file = dest_directory_path / f"{module.slug}.{OUTPUT_EXTENSION}"
