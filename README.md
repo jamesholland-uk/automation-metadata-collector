@@ -7,7 +7,7 @@ Automation Hub Metadata is collected dynamically without need to set it in the
 README. However, the values collected can be overridden in the README
 frontmatter.
 
-Overrides:
+### Overrides
 ```
 title:
 What shows in the browser tab header
